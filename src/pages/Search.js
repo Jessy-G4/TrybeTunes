@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import searchAlbumsAPI from '../services/searchAlbumsAPI';
+import Carregando from '../components/Carregando';
 
 class Search extends React.Component {
   constructor() {
@@ -9,6 +11,9 @@ class Search extends React.Component {
       busca: '',
       estaDesabilitado: true,
       resultados: [],
+      clicado: false,
+      carregando: false,
+      artista: '',
     };
   }
 
@@ -25,14 +30,27 @@ handleChange = (event) => {
 };
 
 handleClick = async () => {
+  this.setState({ carregando: true });
   const { busca } = this.state;
   const resultado = await searchAlbumsAPI(busca);
-  this.setState({ busca: '' });
+  this.setState({ clicado: true }, () => this.limpar());
   this.setState({ resultados: resultado });
+  this.setState({ carregando: false });
 };
 
+limpar = () => {
+  const { busca } = this.state;
+  this.setState({ artista: busca });
+  this.setState({ busca: '' });
+}
+
 render() {
-  const { estaDesabilitado, busca, resultados } = this.state;
+  const { estaDesabilitado,
+    busca,
+    resultados, clicado,
+    carregando,
+    artista,
+  } = this.state;
   return (
 
     <div data-testid="page-search">
@@ -53,6 +71,8 @@ render() {
         Pesquisar
 
       </button>
+      {carregando && <Carregando />}
+      {clicado && <p>{`Resultado de álbuns de: ${artista}`}</p>}
       {resultados.length > 1 ? resultados.map((albums) => (
         <ul
           key={ albums.collectionId }
@@ -61,6 +81,13 @@ render() {
           <li>{albums.collectionName}</li>
           <li>{albums.artistName}</li>
           <li>{albums.collectionPrice}</li>
+          <Link
+            to={ `/album/${albums.collectionId}` }
+            data-testid={ `link-to-album-${albums.collectionId}` }
+          >
+            Saiba Mais
+
+          </Link>
         </ul>))
         : <p>Nenhum álbum foi encontrado</p>}
     </div>
