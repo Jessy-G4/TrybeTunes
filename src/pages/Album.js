@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import Carregando from '../components/Carregando';
+import MusicCard from '../components/MusicCard';
 
 class Album extends React.Component {
   constructor() {
@@ -35,24 +36,10 @@ render() {
     <div data-testid="page-album" onLoad={ this.getInformations }>
       <Header />
       {carregando && <Carregando />}
-      <h2 data-testid="artist-name">{artista.artistName}</h2>
-      <h3 data-testid="album-name">{artista.collectionName}</h3>
-      {resultados.map((info, index) => {
-        if (index > 0) {
-          return (
-            <div key={ info.trackName }>
-              <p>{info.trackName}</p>
-              <audio data-testid="audio-component" src={ info.previewUrl } controls>
-                <track kind="captions" />
-                O seu navegador não suporta o elemento
-                {' '}
-                {' '}
-                <code>audio</code>
-                .
-              </audio>
-            </div>);
-        } return undefined;
-      })}
+      <MusicCard
+        resultados={ resultados }
+        artista={ artista }
+      />
     </div>
   );
 }
