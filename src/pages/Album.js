@@ -10,31 +10,50 @@ class Album extends React.Component {
     this.state = {
       resultados: [],
       carregando: false,
+      artista: '',
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.setState({ carregando: true });
-    await this.getInformations();
+    this.getInformations();
     this.setState({ carregando: false });
   }
 
 getInformations = async () => {
   const { match: { params: { id } } } = this.props;
   const localizarMusicas = await getMusics(id);
-  this.setState({ resultados: localizarMusicas });
+  this.setState({ resultados: [...localizarMusicas] }, () => {
+    this.setState({ artista: localizarMusicas[0] });
+  });
 }
 
 render() {
-  const { carregando, resultados } = this.state;
+  const { carregando, resultados, artista } = this.state;
   return (
 
     <div data-testid="page-album" onLoad={ this.getInformations }>
       <Header />
       {carregando && <Carregando />}
-      <h1>{resultados[0].artistName}</h1>
+      <h2 data-testid="artist-name">{artista.artistName}</h2>
+      <h3 data-testid="album-name">{artista.collectionName}</h3>
+      {resultados.map((info, index) => {
+        if (index > 0) {
+          return (
+            <div key={ info.trackName }>
+              <p>{info.trackName}</p>
+              <audio data-testid="audio-component" src={ info.previewUrl } controls>
+                <track kind="captions" />
+                O seu navegador não suporta o elemento
+                {' '}
+                {' '}
+                <code>audio</code>
+                .
+              </audio>
+            </div>);
+        } return undefined;
+      })}
     </div>
-
   );
 }
 }
