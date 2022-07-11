@@ -36,10 +36,18 @@ render() {
     <div data-testid="page-album" onLoad={ this.getInformations }>
       <Header />
       {carregando && <Carregando />}
-      <MusicCard
-        resultados={ resultados }
-        artista={ artista }
-      />
+      <h2 data-testid="artist-name">{artista.artistName}</h2>
+      <h3 data-testid="album-name">{artista.collectionName}</h3>
+      {resultados.map((info, index) => {
+        if (index > 0) {
+          return (<MusicCard
+            key={ info.trackName }
+            nomeDaMusica={ info.trackName }
+            id={ info.trackId }
+            preview={ info.previewUrl }
+          />);
+        } return undefined;
+      })}
     </div>
   );
 }
