@@ -43,6 +43,7 @@ render() {
           return (<MusicCard
             key={ info.trackName }
             nomeDaMusica={ info.trackName }
+            results={ info }
             id={ info.trackId }
             preview={ info.previewUrl }
           />);

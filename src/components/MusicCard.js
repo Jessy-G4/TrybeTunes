@@ -8,7 +8,7 @@ class MusicCard extends React.Component {
     super();
     this.state = {
       carregando: false,
-      //   favoritas: [],
+      favoritas: [],
       checado: false,
     };
   }
@@ -23,15 +23,19 @@ class MusicCard extends React.Component {
         carregando: true,
         [name]: checked,
       });
-      const { resultados } = this.props;
-      await addSong(resultados);
+      const { results } = this.props;
+      await addSong(results);
       this.setState({ carregando: false });
     }
 
     onLoad = async () => {
       const result = await getFavoriteSongs();
-      console.log(result);
-    //   this.setState({ favoritas: result });
+      this.setState({ favoritas: result }, () => {
+        const { favoritas } = this.state;
+        const { id } = this.props;
+        const isFavorite = favoritas.some((music) => id === music.trackId);
+        this.setState({ checado: isFavorite });
+      });
     }
 
     render() {
